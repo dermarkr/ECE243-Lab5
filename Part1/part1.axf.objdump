@@ -1,0 +1,200 @@
+
+D:/ECE243_Computer_Organization/Labs/Lab_5/Part1/part1.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+			.text			// executable code follows
+			.global _start
+_start:
+			MOV		R0, #0			//Number to display				
+   0:	e3a00000 	mov	r0, #0
+			MOV		R3, #1			//Display On
+   4:	e3a03001 	mov	r3, #1
+			MOV 	R5, #KEYMASKS
+   8:	e3a050e4 	mov	r5, #228	; 0xe4
+			LDR		R10, =0xFF200050
+   c:	e59fa110 	ldr	r10, [pc, #272]	; 124 <BIT_CODES+0x10>
+
+00000010 <MAINLOOP>:
+			
+			
+MAINLOOP:	MOV		R4, PC
+  10:	e1a0400f 	mov	r4, pc
+			ADD		R4, #4
+  14:	e2844004 	add	r4, r4, #4
+			B       DISPLAY
+  18:	ea000032 	b	e8 <DISPLAY>
+
+			LDRB	R2, [R10]
+  1c:	e5da2000 	ldrb	r2, [r10]
+			
+			LDRB	R6, [R5]
+  20:	e5d56000 	ldrb	r6, [r5]
+			AND		R6, R2
+  24:	e0066002 	and	r6, r6, r2
+			MOV		R4, PC
+  28:	e1a0400f 	mov	r4, pc
+			ADD		R4, #8
+  2c:	e2844008 	add	r4, r4, #8
+			CMP		R6, #0b00000001
+  30:	e3560001 	cmp	r6, #1
+			MOVEQ	PC, #SETZERO
+  34:	03a0f094 	moveq	pc, #148	; 0x94
+			
+			LDRB	R6, [R5, #1]
+  38:	e5d56001 	ldrb	r6, [r5, #1]
+			AND		R6, R2
+  3c:	e0066002 	and	r6, r6, r2
+			MOV		R4, PC
+  40:	e1a0400f 	mov	r4, pc
+			ADD		R4, #8
+  44:	e2844008 	add	r4, r4, #8
+			CMP		R6, #0b00000010
+  48:	e3560002 	cmp	r6, #2
+			MOVEQ	PC, #ADDONE
+  4c:	03a0f0a0 	moveq	pc, #160	; 0xa0
+			
+			LDRB	R6, [R5, #2]
+  50:	e5d56002 	ldrb	r6, [r5, #2]
+			AND		R6, R2
+  54:	e0066002 	and	r6, r6, r2
+			MOV		R4, PC
+  58:	e1a0400f 	mov	r4, pc
+			ADD		R4, #8
+  5c:	e2844008 	add	r4, r4, #8
+			CMP		R6, #0b00000100
+  60:	e3560004 	cmp	r6, #4
+			MOVEQ	PC, #CHECKZERO
+  64:	03a0f0b4 	moveq	pc, #180	; 0xb4
+			
+			LDRB	R6, [R5, #3]
+  68:	e5d56003 	ldrb	r6, [r5, #3]
+			AND		R6, R2
+  6c:	e0066002 	and	r6, r6, r2
+			MOV		R4, PC
+  70:	e1a0400f 	mov	r4, pc
+			ADD		R4, #8
+  74:	e2844008 	add	r4, r4, #8
+			CMP		R6, #0b00001000
+  78:	e3560008 	cmp	r6, #8
+			MOVEQ	PC, #BLANK
+  7c:	03a0f0d4 	moveq	pc, #212	; 0xd4
+			
+			B		MAINLOOP
+  80:	eaffffe2 	b	10 <MAINLOOP>
+
+00000084 <WAIT>:
+			
+WAIT:		LDRB	R2, [R10]
+  84:	e5da2000 	ldrb	r2, [r10]
+			CMP		R2, #0
+  88:	e3520000 	cmp	r2, #0
+			MOVEQ	PC, R4
+  8c:	01a0f004 	moveq	pc, r4
+			B		WAIT
+  90:	eafffffb 	b	84 <WAIT>
+
+00000094 <SETZERO>:
+			
+SETZERO:	MOV		R0, #0
+  94:	e3a00000 	mov	r0, #0
+			MOV		R3, #1
+  98:	e3a03001 	mov	r3, #1
+			B 		WAIT
+  9c:	eafffff8 	b	84 <WAIT>
+
+000000a0 <ADDONE>:
+			
+ADDONE:		CMP		R3, #0
+  a0:	e3530000 	cmp	r3, #0
+			BEQ		SETZERO
+  a4:	0afffffa 	beq	94 <SETZERO>
+			ADD		R0, #1
+  a8:	e2800001 	add	r0, r0, #1
+			MOV		R3, #1
+  ac:	e3a03001 	mov	r3, #1
+			B		WAIT
+  b0:	eafffff3 	b	84 <WAIT>
+
+000000b4 <CHECKZERO>:
+			
+CHECKZERO:	CMP		R3, #0
+  b4:	e3530000 	cmp	r3, #0
+			BEQ		SETZERO
+  b8:	0afffff5 	beq	94 <SETZERO>
+			CMP		R0, #0
+  bc:	e3500000 	cmp	r0, #0
+			BEQ		WAIT
+  c0:	0affffef 	beq	84 <WAIT>
+			B		SUBONE
+  c4:	eaffffff 	b	c8 <SUBONE>
+
+000000c8 <SUBONE>:
+			
+SUBONE:		SUB		R0, #1
+  c8:	e2400001 	sub	r0, r0, #1
+			MOV		R3, #1
+  cc:	e3a03001 	mov	r3, #1
+			B		WAIT
+  d0:	eaffffeb 	b	84 <WAIT>
+
+000000d4 <BLANK>:
+			
+BLANK:		MOV 	R3, #0
+  d4:	e3a03000 	mov	r3, #0
+			B		WAIT
+  d8:	eaffffe9 	b	84 <WAIT>
+
+000000dc <SHOW>:
+			
+SHOW:		MOV 	R3, #1
+  dc:	e3a03001 	mov	r3, #1
+			B		WAIT
+  e0:	eaffffe7 	b	84 <WAIT>
+
+000000e4 <KEYMASKS>:
+  e4:	08040201 	.word	0x08040201
+
+000000e8 <DISPLAY>:
+
+
+
+			
+/* Display R5 on HEX1-0*/
+DISPLAY:    LDR     R8, =0xFF200020 // base address of HEX3-HEX0
+  e8:	e59f8038 	ldr	r8, [pc, #56]	; 128 <BIT_CODES+0x14>
+            MOV     R7, R0          // display R5 on HEX1-0
+  ec:	e1a07000 	mov	r7, r0
+			CMP		R3, #0
+  f0:	e3530000 	cmp	r3, #0
+			MOVEQ	R7, #11
+  f4:	03a0700b 	moveq	r7, #11
+            BL      SEG7_CODE       
+  f8:	eb000001 	bl	104 <SEG7_CODE>
+			
+			STR     R7, [R8]        // display the number from R7
+  fc:	e5887000 	str	r7, [r8]
+			MOV		PC, R4
+ 100:	e1a0f004 	mov	pc, r4
+
+00000104 <SEG7_CODE>:
+
+			
+SEG7_CODE:  MOV     R1, #BIT_CODES  
+ 104:	e3a01f45 	mov	r1, #276	; 0x114
+            ADD     R1, R7         // index into the BIT_CODES "array"
+ 108:	e0811007 	add	r1, r1, r7
+			LDRB    R7, [R1]       // load the bit pattern (to be returned)
+ 10c:	e5d17000 	ldrb	r7, [r1]
+            MOV     PC, LR              
+ 110:	e1a0f00e 	mov	pc, lr
+
+00000114 <BIT_CODES>:
+ 114:	4f5b063f 	.word	0x4f5b063f
+ 118:	077d6d66 	.word	0x077d6d66
+ 11c:	0000677f 	.word	0x0000677f
+ 120:	00000000 	.word	0x00000000
+ 124:	ff200050 	.word	0xff200050
+ 128:	ff200020 	.word	0xff200020
